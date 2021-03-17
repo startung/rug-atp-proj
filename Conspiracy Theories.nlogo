@@ -1,12 +1,13 @@
 turtles-own
 [
   belief              ;; the person's strength of belief in the thoery
+  persuasibleness     ;; the persuasiveness of a person, so how well that person can persuade other individuals
   gullible?           ;; if true, the peron believes anything they're told
 ]
 
 to setup
   clear-all
-  set-patch-size 20
+  setup-sceen-size
   ;;ask patches [ set pcolor white ]
   setup-people
   setup-friends-network
@@ -20,6 +21,16 @@ to setup
   reset-ticks
 end
 
+to setup-sceen-size
+  ifelse using-small-screen = True [
+    set-patch-size 11
+  ][
+    set-patch-size 20
+  ]
+
+end
+
+
 to setup-people
   set-default-shape turtles "person"
   create-turtles number-of-people
@@ -27,10 +38,12 @@ to setup-people
     setxy (random-xcor * 0.95) (random-ycor * 0.95) ; position people avoiding the edge
     set belief 0
     set color white
+    set persuasibleness random-float 1 ;; gets a value 0 < pers < 1
 ;;    become-susceptible
 ;;    set virus-check-timer random virus-check-frequency
   ]
 end
+
 
 to setup-friends-network
   let num-links (average-friends * number-of-people) / 2
@@ -49,26 +62,49 @@ end
 
 to go
   ;; stop condition
-
   ;; update stats
-
+  if ticks > 100 [
+    print ( "2nd tick")
+    stop
+  ]
   if all? turtles [belief = 100] [stop]
   ask turtles
   [
-    if belief < 100 [set belief belief + 1]
+    ;;if belief < 100 [set belief belief + 1] ;; would just increase the belief by 1 each tick
+    spread-rumor
     set color scale-color red belief 200 0
   ]
   tick
+end
+
+to spread-rumor
+  let t1-belief belief
+  ;;let t1-persuasiveness persuasiveness
+  show "n-neighbors:"
+  let n-link-neighbors count link-neighbors
+  show n-link-neighbors
+  if n-link-neighbors > 0 [
+
+
+    let outer-impact 0
+    ask link-neighbors
+    [
+      set outer-impact outer-impact + belief
+    ]
+    set outer-impact outer-impact / n-link-neighbors
+    set belief (belief * persuasibleness +  outer-impact * (1 - persuasibleness))
+  ]
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 270
 80
-1498
-1309
+949
+760
 -1
 -1
-20.0
+11.0
 1
 10
 1
@@ -131,7 +167,7 @@ number-of-people
 number-of-people
 10
 500
-250.0
+30.0
 10
 1
 people
@@ -146,7 +182,7 @@ percent-gullible
 percent-gullible
 0
 100
-5.0
+20.0
 1
 1
 %
@@ -161,7 +197,7 @@ average-friends
 average-friends
 1
 number-of-people - 1
-10.0
+6.0
 1
 1
 per person
@@ -291,6 +327,17 @@ You can either choose a preset or choose your over values, if you choose custom 
 14
 0.0
 1
+
+SWITCH
+45
+685
+202
+718
+using-small-screen
+using-small-screen
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
