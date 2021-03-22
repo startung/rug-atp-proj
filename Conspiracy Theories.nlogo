@@ -64,25 +64,23 @@ to go
   ;; stop condition
   ;; update stats
   if ticks > 100 [
-    print ( "2nd tick")
+    print ( "No real stopping condition")
     stop
   ]
   if all? turtles [belief = 100] [stop]
   ask turtles
   [
     ;;if belief < 100 [set belief belief + 1] ;; would just increase the belief by 1 each tick
-    spread-rumor
+    receive-rumor
     set color scale-color red belief 200 0
   ]
   tick
 end
 
-to spread-rumor
+to receive-rumor
   let t1-belief belief
   ;;let t1-persuasiveness persuasiveness
-  show "n-neighbors:"
   let n-link-neighbors count link-neighbors
-  show n-link-neighbors
   if n-link-neighbors > 0 [
 
 
@@ -167,7 +165,7 @@ number-of-people
 number-of-people
 10
 500
-30.0
+90.0
 10
 1
 people
@@ -182,7 +180,7 @@ percent-gullible
 percent-gullible
 0
 100
-20.0
+31.0
 1
 1
 %
@@ -197,7 +195,7 @@ average-friends
 average-friends
 1
 number-of-people - 1
-6.0
+21.0
 1
 1
 per person
