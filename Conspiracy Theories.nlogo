@@ -5,6 +5,10 @@ turtles-own
   gullible?           ;; if true, the peron believes anything they're told
 ]
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; SETUP ;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 to setup
   clear-all
   setup-sceen-size
@@ -60,10 +64,15 @@ to setup-friends-network
   repeat 100 [ layout-spring turtles links 0.3 (world-width / (sqrt number-of-people)) 1 ]
 end
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; GO ;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 to go
   ;; stop condition
   ;; update stats
-  if ticks > 100 [
+  if ticks > 500 [
     print ( "No real stopping condition")
     stop
   ]
@@ -74,6 +83,16 @@ to go
     receive-rumor
     set color scale-color red belief 200 0
   ]
+  ask turtles
+  [
+    do-layout1
+  ]
+
+
+
+
+  ;;layout
+  new-friends-network
   tick
 end
 
@@ -81,25 +100,84 @@ to receive-rumor
   let t1-belief belief
   ;;let t1-persuasiveness persuasiveness
   let n-link-neighbors count link-neighbors
-  if n-link-neighbors > 0 [
 
 
-    let outer-impact 0
-    ask link-neighbors
+  ;; so we dont devide by 0
+  if n-link-neighbors = 0 [ stop ]
+
+  let outer-impact 0
+  ask link-neighbors
+  [
+    set outer-impact outer-impact + belief
+  ]
+  set outer-impact outer-impact / n-link-neighbors
+  set belief (belief * persuasibleness +  outer-impact * (1 - persuasibleness))
+
+end
+
+
+to new-friends-network
+  clear-links
+  let num-links (average-friends * number-of-people) / 2
+  while [count links < num-links ]
+  [
+    ask one-of turtles
     [
-      set outer-impact outer-impact + belief
+      let choice (min-one-of (other turtles with [not link-neighbor? myself])
+                   [distance myself])
+      if choice != nobody [ create-link-with choice ]
     ]
-    set outer-impact outer-impact / n-link-neighbors
-    set belief (belief * persuasibleness +  outer-impact * (1 - persuasibleness))
   ]
 
+end
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; LAYOUT ;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; taken & modified from Giant Component.nlogo
+
+
+to layout
+  if not layout? [ stop ]
+  ;; the number 10 here is arbitrary; more repetitions slows down the
+  ;; model, but too few gives poor layouts
+  repeat 5 [
+    do-layout
+    display  ;; so we get smooth animation
+  ]
+end
+
+to do-layout
+  ;; want to
+  let tautness 0.4
+  layout-spring (turtles with [any? link-neighbors]) links tautness 6 1
+end
+
+
+;;;;;;;;;;;;;;;;;;;;;;
+
+to do-layout1
+  if not layout? [ stop ]
+  let tautness 0.4
+  let t-id who
+  let b1 belief
+  ask link-neighbors[
+    let link-id who
+    let taut (b1 - belief) / 100
+    ;; make taut the distance between the believes
+    if taut > 0 [ set taut taut * -1]
+    let target turtle t-id
+    fd taut * 5
+  ]
+  display
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 270
-80
+50
 949
-760
+730
 -1
 -1
 11.0
@@ -123,10 +201,10 @@ ticks
 30.0
 
 BUTTON
-25
-615
-255
-655
+20
+505
+250
+545
 Setup
 setup
 NIL
@@ -140,9 +218,9 @@ NIL
 1
 
 BUTTON
-25
+0
 740
-255
+230
 780
 Go
 go
@@ -157,55 +235,55 @@ NIL
 0
 
 SLIDER
-25
-495
-255
-528
+20
+385
+250
+418
 number-of-people
 number-of-people
 10
 500
-90.0
+30.0
 10
 1
 people
 HORIZONTAL
 
 SLIDER
-25
-575
-255
-608
+20
+465
+250
+498
 percent-gullible
 percent-gullible
 0
 100
-31.0
+51.0
 1
 1
 %
 HORIZONTAL
 
 SLIDER
-25
-535
-255
-568
+20
+425
+250
+458
 average-friends
 average-friends
 1
-number-of-people - 1
-21.0
+(number-of-people / 4) - 1
+4.0
 1
 1
 per person
 HORIZONTAL
 
 BUTTON
-25
-245
-255
-278
+20
+160
+250
+193
 Default
 set number-of-people 250\nset average-friends 10\nset percent-gullible 5\nsetup
 NIL
@@ -219,30 +297,30 @@ NIL
 1
 
 TEXTBOX
-20
-215
-170
-233
+15
+130
+165
+148
 Presets
 14
 0.0
 0
 
 TEXTBOX
-20
-465
-170
-483
+15
+365
+165
+383
 Custom
 14
 0.0
 1
 
 BUTTON
-25
-285
-255
-318
+20
+200
+250
+233
 Friendly
 set number-of-people 250\nset average-friends 30\nset percent-gullible 5\nsetup
 NIL
@@ -256,10 +334,10 @@ NIL
 1
 
 BUTTON
-25
-325
-255
-358
+20
+240
+250
+273
 Unfriendly
 set number-of-people 250\nset average-friends 3\nset percent-gullible 5\nsetup
 NIL
@@ -273,10 +351,10 @@ NIL
 1
 
 BUTTON
-25
-365
-255
-398
+20
+280
+250
+313
 Highly Gullible
 set number-of-people 250\nset average-friends 10\nset percent-gullible 20\nsetup
 NIL
@@ -290,10 +368,10 @@ NIL
 1
 
 BUTTON
-25
-405
-255
-438
+20
+320
+250
+353
 Lightly Gullible
 set number-of-people 250\nset average-friends 10\nset percent-gullible 2\nsetup
 NIL
@@ -307,32 +385,43 @@ NIL
 1
 
 TEXTBOX
-655
-35
-1140
-131
+260
+10
+745
+106
 Conspiracy Theory Model
 28
 0.0
 1
 
 TEXTBOX
-20
-95
-245
-196
+15
+10
+240
+111
 You can either choose a preset or choose your over values, if you choose custom values you need to click Setup.\n\nThen to run click Go.
 14
 0.0
 1
 
 SWITCH
-45
-685
-202
-718
+40
+575
+197
+608
 using-small-screen
 using-small-screen
+0
+1
+-1000
+
+SWITCH
+40
+625
+162
+658
+layout?
+layout?
 0
 1
 -1000
