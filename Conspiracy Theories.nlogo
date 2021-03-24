@@ -1,7 +1,7 @@
 turtles-own
 [
   belief              ;; the person's strength of belief in the thoery
-  persuasibleness     ;; the persuasiveness of a person, so how well that person can persuade other individuals
+  influenceable     ;; the influenceable of a person, so how well that person can persuade other individuals
   gullible?           ;; if true, the peron believes anything they're told
 ]
 
@@ -42,7 +42,7 @@ to setup-people
     setxy (random-xcor * 0.95) (random-ycor * 0.95) ; position people avoiding the edge
     set belief 0
     set color white
-    set persuasibleness random-float 1 ;; gets a value 0 < pers < 1
+    set influenceable random-float 1 ;; gets a value 0 < pers < 1
 ;;    become-susceptible
 ;;    set virus-check-timer random virus-check-frequency
   ]
@@ -85,7 +85,7 @@ to go
   ]
   ask turtles
   [
-    do-layout1
+    do-layout
   ]
 
 
@@ -96,22 +96,50 @@ to go
   tick
 end
 
-to receive-rumor
-  let t1-belief belief
-  ;;let t1-persuasiveness persuasiveness
-  let n-link-neighbors count link-neighbors
 
+
+
+
+to receive-rumor
+  let t1-belief belief ;; the belief of the cur turtle
+  let n-link-neighbors count link-neighbors
+  let t-id who ;; the id of the cur turtle
 
   ;; so we dont devide by 0
   if n-link-neighbors = 0 [ stop ]
 
+
+  ;; creates a list of the beliefs and distances for each connected turtle
+  let list-distance (list)
+  let list-belief (list)
+
+  ;; the total outer imact
   let outer-impact 0
+
+
   ask link-neighbors
   [
-    set outer-impact outer-impact + belief
+    let dist [distance turtle t-id] of turtle who
+    set list-distance lput dist list-distance ;; collect the distance between cur and linked turtle
+    set list-belief lput belief list-belief ;; collect the belief of linked turtle
+
   ]
-  set outer-impact outer-impact / n-link-neighbors
-  set belief (belief * persuasibleness +  outer-impact * (1 - persuasibleness))
+  let i 0
+  let sum-distance sum(list-distance)
+  let weight-i 0
+
+  ;; algorithm weights closer agents higher than far away once
+  loop
+  [
+    if i = n-link-neighbors [ stop ] ;; stopping condition (I love netlogo.......)
+    set weight-i (( item i list-belief ) / (- sum-distance )) + 1 ;; the weight of linked turtle i
+    set outer-impact outer-impact + weight-i * (item i list-belief ) ;; adjusting the outer imact
+    ;; increment index
+    set i i + 1
+  ]
+
+  ;; sets the belief
+  set belief (belief * (1 -  influenceable) +  outer-impact * influenceable)
 
 end
 
@@ -135,40 +163,35 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;; LAYOUT ;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; taken & modified from Giant Component.nlogo
-
-
-to layout
-  if not layout? [ stop ]
-  ;; the number 10 here is arbitrary; more repetitions slows down the
-  ;; model, but too few gives poor layouts
-  repeat 5 [
-    do-layout
-    display  ;; so we get smooth animation
-  ]
-end
 
 to do-layout
-  ;; want to
-  let tautness 0.4
-  layout-spring (turtles with [any? link-neighbors]) links tautness 6 1
-end
-
-
-;;;;;;;;;;;;;;;;;;;;;;
-
-to do-layout1
-  if not layout? [ stop ]
-  let tautness 0.4
   let t-id who
   let b1 belief
+  let arb 1
+  let min-dist 2
+
   ask link-neighbors[
+
+    let dist [distance turtle t-id] of turtle who
+    ;;if dist < min-dist [ stop ]
+
+
     let link-id who
-    let taut (b1 - belief) / 100
+    let diff (b1 - belief) / 100
     ;; make taut the distance between the believes
-    if taut > 0 [ set taut taut * -1]
+    if diff < 0 [ set diff diff * -1]
+    let tvl-dist (0.5 - diff) * arb
+
+    ;;
     let target turtle t-id
-    fd taut * 5
+    face target
+
+
+    ifelse dist < min-dist [
+      fd dist - min-dist
+    ][
+      fd tvl-dist
+    ]
   ]
   display
 end
@@ -218,10 +241,10 @@ NIL
 1
 
 BUTTON
-0
-740
-230
-780
+10
+615
+240
+655
 Go
 go
 T
@@ -243,7 +266,7 @@ number-of-people
 number-of-people
 10
 500
-30.0
+60.0
 10
 1
 people
@@ -411,17 +434,6 @@ SWITCH
 608
 using-small-screen
 using-small-screen
-0
-1
--1000
-
-SWITCH
-40
-625
-162
-658
-layout?
-layout?
 0
 1
 -1000
