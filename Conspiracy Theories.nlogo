@@ -1,9 +1,17 @@
+breed [sources source]
+breed [people person]
+undirected-link-breed [ss-ps s-p] ;; sourceS-peopleS source-person
+undirected-link-breed [ps-ps p-p] ;; peopleS-peopleS person-person
+
 turtles-own
 [
   belief              ;; the person's strength of belief in the thoery
   influenceable       ;; the influenceable of a person, so how well that person can persuade other individuals
   gullible?           ;; if true, the peron believes anything they're told
+  news-watcher?       ;; if true, watches the news
 ]
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;; SETUP ;;;;;;;;;;;;;
@@ -15,37 +23,55 @@ to setup
   ;;ask patches [ set pcolor white ]
   setup-people
   setup-friends-network
-  ask n-of ((percent-gullible * number-of-people) / 100) turtles [
+  setup-news
+  ask n-of ((percent-gullible * number-of-people) / 100) people [
     set gullible? true
     set shape "sheep 2"
     set color red
     set belief 100
   ]
-  ask links [ set color gray ]
+  ask ps-ps [ set color gray ]
   reset-ticks
 end
 
+
 to setup-sceen-size
   ifelse using-small-screen = True [
-    set-patch-size 11
+    set-patch-size 8
   ][
     set-patch-size 20
   ]
 
 end
 
-
 to setup-people
-  set-default-shape turtles "person"
-  create-turtles number-of-people
+  set-default-shape people "person"
+  create-people number-of-people
   [
     setxy (random-xcor * 0.95) (random-ycor * 0.95) ; position people avoiding the edge
     set belief 0
     set color white
     set influenceable random-float 1 ;; gets a value 0 < pers < 1
+    set news-watcher? false
 ;;    become-susceptible
 ;;    set virus-check-timer random virus-check-frequency
   ]
+end
+
+to setup-news
+  create-sources 1[
+    setxy 0 0
+    set color green
+    set shape "house"
+    create-ss-ps-with n-of news-watcher people [set color green]
+    ;;let a news-watcher
+    ;;show n-of news-watcher people
+  ]
+
+
+
+
+
 end
 
 
@@ -53,15 +79,15 @@ to setup-friends-network
   let num-links (average-friends * number-of-people) / 2
   while [count links < num-links ]
   [
-    ask one-of turtles
+    ask one-of people
     [
-      let choice (min-one-of (other turtles with [not link-neighbor? myself])
+      let choice (min-one-of (other people with [not link-neighbor? myself])
                    [distance myself])
-      if choice != nobody [ create-link-with choice ]
+      if choice != nobody [ create-p-p-with choice ]
     ]
   ]
   ;; even out the networrk spacing
-  repeat 100 [ layout-spring turtles links 0.3 (world-width / (sqrt number-of-people)) 1 ]
+  repeat 100 [ layout-spring people links 0.3 (world-width / (sqrt number-of-people)) 1 ]
 end
 
 
@@ -72,26 +98,20 @@ end
 to go
   ;; stop condition
   ;; update stats
-  if ticks > 500 [
+  if ticks > 2000 [
     print ( "No real stopping condition")
     stop
   ]
-  if all? turtles [belief = 100] [stop]
-  ask turtles
+  if all? people [belief = 100] [stop]
+  ask people
   [
-    ;;if belief < 100 [set belief belief + 1] ;; would just increase the belief by 1 each tick
     receive-rumor
     set color scale-color red belief 200 0
   ]
-  ask turtles
+  ask people
   [
     do-layout   ;; getting closer to the likeminded people
   ]
-
-
-
-
-  ;;layout
   new-friends-network
   tick
 end
@@ -102,11 +122,11 @@ end
 
 to receive-rumor
   let t1-belief belief ;; the belief of the cur turtle
-  let n-link-neighbors count link-neighbors
+  let n-p-p-neighbors count p-p-neighbors
   let t-id who ;; the id of the cur turtle
 
   ;; so we dont divide by 0
-  if n-link-neighbors = 0 [ stop ]
+  if n-p-p-neighbors = 0 [ stop ]
 
 
   ;; creates a list of the beliefs and distances for each connected turtle
@@ -118,7 +138,7 @@ to receive-rumor
   let outer-impact 0
 
 
-  ask link-neighbors
+  ask p-p-neighbors
   [
     let dist [distance turtle t-id] of turtle who
     set list-distance lput dist list-distance ;; collect the distance between cur and linked turtle
@@ -132,19 +152,14 @@ to receive-rumor
   let weight-i 0
 
   let nom 0
-  let denom 0
 
-  ;; algorithm weights closer agents higher than far away once
-  ;loop
-  ;[
-    ;if i = n-link-neighbors [ stop ] ;; stopping condition (I love netlogo.......)
-    ;set nom sum-distance - (item i list-distance)
-    ;set list-nom lput nom list-nom ;; collect the belief of linked turtle
-    ;; increment index
-   ; set i i + 1
-  ;]
 
-  while[ i  < n-link-neighbors]
+  ;;;;;;;;;; formula of own belief ;;;;;;;;;;;;
+  ; own-belief = own-belief * (1-influencability) + frinds-belief * (influencability)
+  ; friends-belief = sum(friend-belief)
+  ; friend-belief-i = (sum(distances) - distance-i) / sum(sum(distances) - distance-i))
+
+  while[ i  < n-p-p-neighbors]
   [
     set nom sum-distance - (item i list-distance)
     set list-nom lput nom list-nom ;; collect the belief of linked turtle
@@ -154,7 +169,7 @@ to receive-rumor
   set i 0
   let sum-nom sum(list-nom)
   if sum-nom = 0 [ stop ]
-  while [i < n-link-neighbors]
+  while [i < n-p-p-neighbors]
   [
     set weight-i (( item i list-nom ) / sum-nom) ;; the weight of linked turtle i
     set outer-impact outer-impact + weight-i * (item i list-belief ) ;; adjusting the outer imact
@@ -162,22 +177,28 @@ to receive-rumor
     set i i + 1
 
   ]
-  ;; sets the belief
+  ;; doing a bit of radicalisation
+  let radical (outer-impact - 50) * 0.05
+
+  ;; keeping it in the bouds [0,100]
+  set outer-impact (min list 100 (radical + outer-impact))
+  set outer-impact (max list 0 outer-impact)
+
   set belief (belief * (1 -  influenceable) +  outer-impact * influenceable)
 
 end
 
 
 to new-friends-network
-  clear-links
+  ask ps-ps [ die] ;; kills all the ps-ps connection to sez thrm up newly
   let num-links (average-friends * number-of-people) / 2
   while [count links < num-links ]
   [
-    ask one-of turtles
+    ask one-of people
     [
-      let choice (min-one-of (other turtles with [not link-neighbor? myself])
+      let choice (min-one-of (other people with [not link-neighbor? myself])
                    [distance myself])
-      if choice != nobody [ create-link-with choice ]
+      if choice != nobody [ create-p-p-with choice ]
     ]
   ]
 
@@ -191,26 +212,23 @@ end
 to do-layout
   let t-id who
   let b1 belief
-  let arb 1
-  let min-dist 2
+  let min-dist 2 ;; min distance between to neighbors
 
-  ask link-neighbors[
+  ask p-p-neighbors[
 
-    let dist [distance turtle t-id] of turtle who
-    ;;if dist < min-dist [ stop ]
+    let dist [distance turtle t-id] of turtle who ;; get the distance between connected turtles
 
+    let diff (b1 - belief) / 100 ;; difference in belief
 
-    let link-id who
-    let diff (b1 - belief) / 100
     ;; make taut the distance between the believes
     if diff < 0 [ set diff diff * -1]
-    let tvl-dist (0.5 - diff) * arb
-
-    ;;
-    let target turtle t-id
-    face target
+    let tvl-dist (0.5 - diff)
 
 
+    ;;let target turtle t-id
+    face turtle t-id
+
+    ;; to maintain a bit of distance, for nicer visualisation
     ifelse dist < min-dist [
       fd dist - min-dist
     ][
@@ -223,11 +241,11 @@ end
 GRAPHICS-WINDOW
 270
 50
-949
-730
+766
+547
 -1
 -1
-11.0
+8.0
 1
 10
 1
@@ -248,10 +266,10 @@ ticks
 30.0
 
 BUTTON
-20
-505
-250
-545
+15
+550
+245
+590
 Setup
 setup
 NIL
@@ -265,10 +283,10 @@ NIL
 1
 
 BUTTON
-10
-615
-240
-655
+5
+660
+235
+700
 Go
 go
 T
@@ -290,7 +308,7 @@ number-of-people
 number-of-people
 10
 500
-60.0
+70.0
 10
 1
 people
@@ -452,15 +470,30 @@ You can either choose a preset or choose your over values, if you choose custom 
 1
 
 SWITCH
-40
-575
-197
-608
+35
+620
+192
+653
 using-small-screen
 using-small-screen
 0
 1
 -1000
+
+SLIDER
+20
+505
+192
+538
+news-watcher
+news-watcher
+0
+number-of-people
+6.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
