@@ -98,7 +98,7 @@ end
 to go
   ;; stop condition
   ;; update stats
-  if ticks > 2000 [
+  if ticks > 100 [
     print ( "No real stopping condition")
     stop
   ]
@@ -108,6 +108,12 @@ to go
     receive-rumor
     set color scale-color red belief 200 0
   ]
+  ask sources [
+    send-news
+
+  ]
+
+
   ask people
   [
     do-layout   ;; getting closer to the likeminded people
@@ -117,6 +123,15 @@ to go
 end
 
 
+
+to send-news
+  ask s-p-neighbors
+  [
+    set belief belief * 0.9
+  ]
+
+
+end
 
 
 
@@ -240,9 +255,9 @@ end
 @#$#@#$#@
 GRAPHICS-WINDOW
 270
-50
+185
 766
-547
+682
 -1
 -1
 8.0
@@ -489,11 +504,30 @@ news-watcher
 news-watcher
 0
 number-of-people
-6.0
+70.0
 1
 1
 NIL
 HORIZONTAL
+
+PLOT
+850
+350
+1050
+500
+plot 1
+NIL
+NIL
+0.0
+100.0
+0.0
+100.0
+false
+true
+"" ""
+PENS
+"infected" 1.0 0 -5298144 true "" "plot count turtles with [belief > 50]"
+"cool dudes" 1.0 0 -16777216 true "" "plot count turtles with [belief <= 50]"
 
 @#$#@#$#@
 ## WHAT IS IT?
