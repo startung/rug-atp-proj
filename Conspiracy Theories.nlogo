@@ -1,7 +1,7 @@
 turtles-own
 [
   belief              ;; the person's strength of belief in the thoery
-  influenceable     ;; the influenceable of a person, so how well that person can persuade other individuals
+  influenceable       ;; the influenceable of a person, so how well that person can persuade other individuals
   gullible?           ;; if true, the peron believes anything they're told
 ]
 
@@ -85,7 +85,7 @@ to go
   ]
   ask turtles
   [
-    do-layout
+    do-layout   ;; getting closer to the likeminded people
   ]
 
 
@@ -105,13 +105,14 @@ to receive-rumor
   let n-link-neighbors count link-neighbors
   let t-id who ;; the id of the cur turtle
 
-  ;; so we dont devide by 0
+  ;; so we dont divide by 0
   if n-link-neighbors = 0 [ stop ]
 
 
   ;; creates a list of the beliefs and distances for each connected turtle
   let list-distance (list)
   let list-belief (list)
+  let list-nom (list)
 
   ;; the total outer imact
   let outer-impact 0
@@ -124,20 +125,43 @@ to receive-rumor
     set list-belief lput belief list-belief ;; collect the belief of linked turtle
 
   ]
+
+
   let i 0
   let sum-distance sum(list-distance)
   let weight-i 0
 
+  let nom 0
+  let denom 0
+
   ;; algorithm weights closer agents higher than far away once
-  loop
+  ;loop
+  ;[
+    ;if i = n-link-neighbors [ stop ] ;; stopping condition (I love netlogo.......)
+    ;set nom sum-distance - (item i list-distance)
+    ;set list-nom lput nom list-nom ;; collect the belief of linked turtle
+    ;; increment index
+   ; set i i + 1
+  ;]
+
+  while[ i  < n-link-neighbors]
   [
-    if i = n-link-neighbors [ stop ] ;; stopping condition (I love netlogo.......)
-    set weight-i (( item i list-belief ) / (- sum-distance )) + 1 ;; the weight of linked turtle i
+    set nom sum-distance - (item i list-distance)
+    set list-nom lput nom list-nom ;; collect the belief of linked turtle
+    set i (i + 1)
+  ]
+
+  set i 0
+  let sum-nom sum(list-nom)
+  if sum-nom = 0 [ stop ]
+  while [i < n-link-neighbors]
+  [
+    set weight-i (( item i list-nom ) / sum-nom) ;; the weight of linked turtle i
     set outer-impact outer-impact + weight-i * (item i list-belief ) ;; adjusting the outer imact
     ;; increment index
     set i i + 1
-  ]
 
+  ]
   ;; sets the belief
   set belief (belief * (1 -  influenceable) +  outer-impact * influenceable)
 
