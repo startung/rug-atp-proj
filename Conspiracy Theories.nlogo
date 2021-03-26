@@ -1,16 +1,15 @@
 breed [sources source]
 breed [people person]
-undirected-link-breed [ss-ps s-p] ;; sourceS-peopleS source-person
-undirected-link-breed [ps-ps p-p] ;; peopleS-peopleS person-person
+undirected-link-breed [ss-ps s-p] ;; connection between sourceS-peopleS / source-person
+undirected-link-breed [ps-ps p-p] ;; connection between peopleS-peopleS / person-person
 
 turtles-own
 [
   belief              ;; the person's strength of belief in the thoery
   influenceable       ;; the influenceable of a person, so how well that person can persuade other individuals
-  gullible?           ;; if true, the peron believes anything they're told
+  gullible?           ;; if true, the peron beliefs in tick the beginning (tick one)
   news-watcher?       ;; if true, watches the news
 ]
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,7 +38,7 @@ to setup-sceen-size
   ifelse using-small-screen = True [
     set-patch-size 8
   ][
-    set-patch-size 20
+    set-patch-size 12
   ]
 
 end
@@ -49,7 +48,7 @@ to setup-people
   create-people number-of-people
   [
     setxy (random-xcor * 0.95) (random-ycor * 0.95) ; position people avoiding the edge
-    set belief 0
+    set belief 0 ;; defaulting that they dont have a belief in the theory
     set color white
     set influenceable random-float 1 ;; gets a value 0 < pers < 1
     set news-watcher? false
@@ -63,15 +62,8 @@ to setup-news
     setxy 0 0
     set color green
     set shape "house"
-    create-ss-ps-with n-of news-watcher people [set color green]
-    ;;let a news-watcher
-    ;;show n-of news-watcher people
+    create-ss-ps-with n-of news-watcher people [set color green] ;; creates links between news-watcher people and the news
   ]
-
-
-
-
-
 end
 
 
@@ -103,17 +95,18 @@ to go
     stop
   ]
   if all? people [belief = 100] [stop]
+  ;; let people spread the rumor
   ask people
   [
     receive-rumor
     set color scale-color red belief 200 0
   ]
+  ;; sends out the news
   ask sources [
     send-news
-
   ]
 
-
+  ;; pusing peole closer to likeminded people
   ask people
   [
     do-layout   ;; getting closer to the likeminded people
@@ -123,14 +116,13 @@ to go
 end
 
 
-
+;; if you watch the news your belief gets droped by 10%
 to send-news
+  let reduction-through-news 0.9
   ask s-p-neighbors
   [
-    set belief belief * 0.9
+    set belief belief * reduction-through-news
   ]
-
-
 end
 
 
@@ -504,16 +496,16 @@ news-watcher
 news-watcher
 0
 number-of-people
-70.0
+5.0
 1
 1
 NIL
 HORIZONTAL
 
 PLOT
-850
+845
 350
-1050
+1045
 500
 plot 1
 NIL
@@ -526,8 +518,8 @@ false
 true
 "" ""
 PENS
-"infected" 1.0 0 -5298144 true "" "plot count turtles with [belief > 50]"
-"cool dudes" 1.0 0 -16777216 true "" "plot count turtles with [belief <= 50]"
+"infected" 1.0 0 -5298144 true "" "plot (count people with [belief > 50] / count people) * 100"
+"cool dudes" 1.0 0 -16777216 true "" "plot (count people with [belief <= 50] / count people) * 100"
 
 @#$#@#$#@
 ## WHAT IS IT?
