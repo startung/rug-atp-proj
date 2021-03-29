@@ -315,7 +315,7 @@ number-of-people
 number-of-people
 50
 1000
-500.0
+100.0
 50
 1
 people
@@ -544,20 +544,17 @@ NIL
 1
 
 @#$#@#$#@
+# Conspiracy Theories - C34
 ## WHAT IS IT?
 
 This model demonstrates the spread of misinformation through a population, and the impact of a trusted fact-check news media can have in its spread.
 
 ## HOW IT WORKS
+Each time step (tick), each node will try to convice the connected nodes of its own `belief`. Each node has a `belief` and also an incluenability which tetermiens how much a a node will be influenced by neighbors per tick. The more the node beliefs in a theory the more red the node becommes. Initial beliefers of a theory will be displayed as a sheep. This only helps as a representation and is not used afterwards. 
 
-Each time step (tick), each infected node (colored red) attempts to infect all of its neighbors.  Susceptible neighbors (colored green) will be infected with a probability given by the VIRUS-SPREAD-CHANCE slider.  This might correspond to the probability that someone on the susceptible system actually executes the infected email attachment.
-Resistant nodes (colored gray) cannot be infected.  This might correspond to up-to-date antivirus software and security patches that make a computer immune to this particular virus.
+Each node will also adjust his position to its belief. If there are two nodes which share a similar belied they will move closer towards eachother. This will lead to a clustering of nodes having a similar belief. Additionally, there is a radicallisation happening which happens when the neighbors are all strongly believing or strongly not believing in a theory. This will lead to the clusters, without news impact will either belief or dispelief a theory completely. 
 
-Infected nodes are not immediately aware that they are infected.  Only every so often (determined by the VIRUS-CHECK-FREQUENCY slider) do the nodes check whether they are infected by a virus.  This might correspond to a regularly scheduled virus-scan procedure, or simply a human noticing something fishy about how the computer is behaving.  When the virus has been detected, there is a probability that the virus will be removed (determined by the RECOVERY-CHANCE slider).
 
-If a node does recover, there is some probability that it will become resistant to this virus in the future (given by the GAIN-RESISTANCE-CHANCE slider).
-
-When a node becomes resistant, the links between it and its neighbors are darkened, since they are no longer possible vectors for spreading the virus.
 
 ## HOW TO USE IT
 
