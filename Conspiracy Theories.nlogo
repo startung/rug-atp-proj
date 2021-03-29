@@ -246,10 +246,10 @@ to do-layout
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-270
-185
-1010
-926
+265
+125
+1005
+866
 -1
 -1
 12.0
@@ -313,10 +313,10 @@ SLIDER
 418
 number-of-people
 number-of-people
-10
-500
-70.0
-10
+50
+1000
+500.0
+50
 1
 people
 HORIZONTAL
@@ -330,7 +330,7 @@ percent-misinformed
 percent-misinformed
 0
 100
-51.0
+50.0
 1
 1
 %
@@ -345,7 +345,7 @@ average-friends
 average-friends
 1
 (number-of-people / 4) - 1
-3.0
+15.0
 1
 1
 per person
@@ -354,10 +354,10 @@ HORIZONTAL
 BUTTON
 20
 160
-250
+247
 193
-Default
-set number-of-people 250\nset average-friends 10\nset percent-misinformed 5\nsetup
+South Korea
+set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 21\nsetup
 NIL
 1
 T
@@ -391,10 +391,10 @@ Custom
 BUTTON
 20
 200
-250
+247
 233
-Friendly
-set number-of-people 250\nset average-friends 30\nset percent-misinformed 5\nsetup
+United States of America
+set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 29\nsetup
 NIL
 1
 T
@@ -408,10 +408,10 @@ NIL
 BUTTON
 20
 240
-250
+247
 273
-Unfriendly
-set number-of-people 250\nset average-friends 3\nset percent-misinformed 5\nsetup
+Netherlands
+set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 52\nsetup
 NIL
 1
 T
@@ -425,33 +425,16 @@ NIL
 BUTTON
 20
 280
-250
+247
 313
-Highly Misinformed
-set number-of-people 250\nset average-friends 10\nset percent-misinformed 20\nsetup
+Finland
+set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 56\nsetup
 NIL
 1
 T
 OBSERVER
 NIL
 4
-NIL
-NIL
-1
-
-BUTTON
-20
-320
-250
-353
-Lightly Misinformed
-set number-of-people 250\nset average-friends 10\nset percent-misinformed 2\nsetup
-NIL
-1
-T
-OBSERVER
-NIL
-5
 NIL
 NIL
 1
@@ -496,7 +479,7 @@ news-trust
 news-trust
 0
 number-of-people
-6.0
+21.0
 1
 1
 %
@@ -506,10 +489,10 @@ PLOT
 20
 725
 250
-925
-Informed
-NIL
-NIL
+935
+Spread on Misinformation
+Ticks
+Percent of Population
 0.0
 100.0
 0.0
@@ -518,8 +501,30 @@ false
 true
 "" ""
 PENS
-"misinformed" 1.0 0 -5298144 true "" "plot (count people with [belief > 50] / count people) * 100"
-"correct" 1.0 0 -16777216 true "" "plot (count people with [belief <= 50] / count people) * 100"
+"Misinformed" 1.0 0 -2674135 true "" "plot (count people with [belief > 50] / count people) * 100"
+"Correct" 1.0 0 -13345367 true "" "plot (count people with [belief <= 50] / count people) * 100"
+
+MONITOR
+265
+875
+422
+936
+Misinformed People
+count people with [belief > 50]
+1
+1
+15
+
+MONITOR
+435
+875
+642
+936
+Correctly Informed People
+count people with [belief <= 50]
+0
+1
+15
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -558,7 +563,6 @@ At the end of the run, after the virus has died out, some nodes are still suscep
 ## THINGS TO TRY
 
 Set GAIN-RESISTANCE-CHANCE to 0%.  Under what conditions will the virus still die out?   How long does it take?  What conditions are required for the virus to live?  If the RECOVERY-CHANCE is bigger than 0, even if the VIRUS-SPREAD-CHANCE is high, do you think that if you could run the model forever, the virus could stay alive?
-
 @#$#@#$#@
 default
 true
