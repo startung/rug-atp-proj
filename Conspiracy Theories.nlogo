@@ -7,8 +7,8 @@ turtles-own
 [
   belief              ;; the person's strength of belief in the thoery
   influenceable       ;; the influenceable of a person, so how well that person can persuade other individuals
-  gullible?           ;; if true, the peron beliefs in tick the beginning (tick one)
-  news-watcher?       ;; if true, watches the news
+  misinformed?        ;; if true, the peron beliefs in tick the beginning (tick one)
+  news-trust?         ;; if true, trusts the news media
 ]
 
 
@@ -23,8 +23,8 @@ to setup
   setup-people
   setup-friends-network
   setup-news
-  ask n-of ((percent-gullible * number-of-people) / 100) people [
-    set gullible? true
+  ask n-of ((percent-misinformed * number-of-people) / 100) people [
+    set misinformed? true
     set shape "sheep 2"
     set color red
     set belief 100
@@ -51,7 +51,7 @@ to setup-people
     set belief 0 ;; defaulting that they dont have a belief in the theory
     set color white
     set influenceable random-float 1 ;; gets a value 0 < pers < 1
-    set news-watcher? false
+    set news-trust? false
 ;;    become-susceptible
 ;;    set virus-check-timer random virus-check-frequency
   ]
@@ -62,7 +62,7 @@ to setup-news
     setxy 0 0
     set color green
     set shape "house"
-    create-ss-ps-with n-of news-watcher people [set color green] ;; creates links between news-watcher people and the news
+    create-ss-ps-with n-of news-trust people [set color green] ;; creates links between news-trust people and the news
   ]
 end
 
@@ -248,11 +248,11 @@ end
 GRAPHICS-WINDOW
 270
 185
-766
-682
+1010
+926
 -1
 -1
-8.0
+12.0
 1
 10
 1
@@ -273,10 +273,10 @@ ticks
 30.0
 
 BUTTON
-15
-550
-245
-590
+20
+610
+250
+650
 Setup
 setup
 NIL
@@ -290,9 +290,9 @@ NIL
 1
 
 BUTTON
-5
+20
 660
-235
+250
 700
 Go
 go
@@ -326,8 +326,8 @@ SLIDER
 465
 250
 498
-percent-gullible
-percent-gullible
+percent-misinformed
+percent-misinformed
 0
 100
 51.0
@@ -345,7 +345,7 @@ average-friends
 average-friends
 1
 (number-of-people / 4) - 1
-4.0
+3.0
 1
 1
 per person
@@ -357,7 +357,7 @@ BUTTON
 250
 193
 Default
-set number-of-people 250\nset average-friends 10\nset percent-gullible 5\nsetup
+set number-of-people 250\nset average-friends 10\nset percent-misinformed 5\nsetup
 NIL
 1
 T
@@ -394,7 +394,7 @@ BUTTON
 250
 233
 Friendly
-set number-of-people 250\nset average-friends 30\nset percent-gullible 5\nsetup
+set number-of-people 250\nset average-friends 30\nset percent-misinformed 5\nsetup
 NIL
 1
 T
@@ -411,7 +411,7 @@ BUTTON
 250
 273
 Unfriendly
-set number-of-people 250\nset average-friends 3\nset percent-gullible 5\nsetup
+set number-of-people 250\nset average-friends 3\nset percent-misinformed 5\nsetup
 NIL
 1
 T
@@ -427,8 +427,8 @@ BUTTON
 280
 250
 313
-Highly Gullible
-set number-of-people 250\nset average-friends 10\nset percent-gullible 20\nsetup
+Highly Misinformed
+set number-of-people 250\nset average-friends 10\nset percent-misinformed 20\nsetup
 NIL
 1
 T
@@ -444,8 +444,8 @@ BUTTON
 320
 250
 353
-Lightly Gullible
-set number-of-people 250\nset average-friends 10\nset percent-gullible 2\nsetup
+Lightly Misinformed
+set number-of-people 250\nset average-friends 10\nset percent-misinformed 2\nsetup
 NIL
 1
 T
@@ -457,11 +457,11 @@ NIL
 1
 
 TEXTBOX
-260
-10
-745
-106
-Conspiracy Theory Model
+275
+35
+1015
+131
+Influence of Fact-Checked News Media on the Spread of Misinformation Model
 28
 0.0
 1
@@ -477,37 +477,37 @@ You can either choose a preset or choose your over values, if you choose custom 
 1
 
 SWITCH
-35
-620
-192
-653
+20
+545
+250
+578
 using-small-screen
 using-small-screen
-0
+1
 1
 -1000
 
 SLIDER
 20
 505
-192
+250
 538
-news-watcher
-news-watcher
+news-trust
+news-trust
 0
 number-of-people
-5.0
+6.0
 1
 1
-NIL
+%
 HORIZONTAL
 
 PLOT
-845
-350
-1045
-500
-plot 1
+20
+725
+250
+925
+Informed
 NIL
 NIL
 0.0
@@ -518,13 +518,13 @@ false
 true
 "" ""
 PENS
-"infected" 1.0 0 -5298144 true "" "plot (count people with [belief > 50] / count people) * 100"
-"cool dudes" 1.0 0 -16777216 true "" "plot (count people with [belief <= 50] / count people) * 100"
+"misinformed" 1.0 0 -5298144 true "" "plot (count people with [belief > 50] / count people) * 100"
+"correct" 1.0 0 -16777216 true "" "plot (count people with [belief <= 50] / count people) * 100"
 
 @#$#@#$#@
 ## WHAT IS IT?
 
-This model demonstrates the spread of a virus through a network.  Although the model is somewhat abstract, one interpretation is that each node represents a computer, and we are modeling the progress of a computer virus (or worm) through this network.  Each node may be in one of three states:  susceptible, infected, or resistant.  In the academic literature such a model is sometimes referred to as an SIR model for epidemics.
+This model demonstrates the spread of misinformation through a population, and the impact of a trusted fact-check news media can have in its spread.
 
 ## HOW IT WORKS
 
@@ -559,49 +559,6 @@ At the end of the run, after the virus has died out, some nodes are still suscep
 
 Set GAIN-RESISTANCE-CHANCE to 0%.  Under what conditions will the virus still die out?   How long does it take?  What conditions are required for the virus to live?  If the RECOVERY-CHANCE is bigger than 0, even if the VIRUS-SPREAD-CHANCE is high, do you think that if you could run the model forever, the virus could stay alive?
 
-## EXTENDING THE MODEL
-
-The real computer networks on which viruses spread are generally not based on spatial proximity, like the networks found in this model.  Real computer networks are more often found to exhibit a "scale-free" link-degree distribution, somewhat similar to networks created using the Preferential Attachment model.  Try experimenting with various alternative network structures, and see how the behavior of the virus differs.
-
-Suppose the virus is spreading by emailing itself out to everyone in the computer's address book.  Since being in someone's address book is not a symmetric relationship, change this model to use directed links instead of undirected links.
-
-Can you model multiple viruses at the same time?  How would they interact?  Sometimes if a computer has a piece of malware installed, it is more vulnerable to being infected by more malware.
-
-Try making a model similar to this one, but where the virus has the ability to mutate itself.  Such self-modifying viruses are a considerable threat to computer security, since traditional methods of virus signature identification may not work against them.  In your model, nodes that become immune may be reinfected if the virus has mutated to become significantly different than the variant that originally infected the node.
-
-## RELATED MODELS
-
-Virus, Disease, Preferential Attachment, Diffusion on a Directed Network
-
-## NETLOGO FEATURES
-
-Links are used for modeling the network.  The `layout-spring` primitive is used to position the nodes and links such that the structure of the network is visually clear.
-
-Though it is not used in this model, there exists a network extension for NetLogo that you can download at: https://github.com/NetLogo/NW-Extension.
-
-## HOW TO CITE
-
-If you mention this model or the NetLogo software in a publication, we ask that you include the citations below.
-
-For the model itself:
-
-* Stonedahl, F. and Wilensky, U. (2008).  NetLogo Virus on a Network model.  http://ccl.northwestern.edu/netlogo/models/VirusonaNetwork.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-Please cite the NetLogo software as:
-
-* Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-## COPYRIGHT AND LICENSE
-
-Copyright 2008 Uri Wilensky.
-
-![CC BY-NC-SA 3.0](http://ccl.northwestern.edu/images/creativecommons/byncsa.png)
-
-This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
-
-Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
-
-<!-- 2008 Cite: Stonedahl, F. -->
 @#$#@#$#@
 default
 true
