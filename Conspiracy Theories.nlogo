@@ -407,9 +407,9 @@ NIL
 
 BUTTON
 20
-240
+280
 247
-273
+313
 Netherlands
 set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 52\nsetup
 NIL
@@ -417,16 +417,16 @@ NIL
 T
 OBSERVER
 NIL
-3
+4
 NIL
 NIL
 1
 
 BUTTON
 20
-280
+320
 247
-313
+353
 Finland
 set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 56\nsetup
 NIL
@@ -434,7 +434,7 @@ NIL
 T
 OBSERVER
 NIL
-4
+5
 NIL
 NIL
 1
@@ -479,7 +479,7 @@ news-trust
 news-trust
 0
 number-of-people
-21.0
+29.0
 1
 1
 %
@@ -525,6 +525,23 @@ count people with [belief <= 50]
 0
 1
 15
+
+BUTTON
+20
+240
+248
+273
+Middle Value
+set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 38.5\nsetup
+NIL
+1
+T
+OBSERVER
+NIL
+3
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -876,5 +893,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-1
+0
 @#$#@#$#@
