@@ -454,7 +454,7 @@ TEXTBOX
 10
 240
 111
-You can either choose a preset or choose your over values, if you choose custom values you need to click Setup.\n\nThen to run click Go.
+You can either choose a preset or choose your own values, if you choose custom values you need to click Setup.\n\nThen to run click Go.
 14
 0.0
 1
@@ -877,6 +877,56 @@ NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="test" repetitions="1" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>count turtles with [belief &gt; 50]</metric>
+    <enumeratedValueSet variable="using-small-screen">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="percent-misinformed">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="number-of-people">
+      <value value="500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average-friends">
+      <value value="15"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="news-trust">
+      <value value="21"/>
+      <value value="29"/>
+      <value value="38.5"/>
+      <value value="52"/>
+      <value value="56"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="100 reps" repetitions="100" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>count turtles with [belief &gt; 50]</metric>
+    <enumeratedValueSet variable="using-small-screen">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="percent-misinformed">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="number-of-people">
+      <value value="500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="average-friends">
+      <value value="15"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="news-trust">
+      <value value="21"/>
+      <value value="29"/>
+      <value value="38.5"/>
+      <value value="52"/>
+      <value value="56"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default

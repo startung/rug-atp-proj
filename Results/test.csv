@@ -1,0 +1,16 @@
+"BehaviorSpace results (NetLogo 6.2.0)"
+"Conspiracy Theories.nlogo"
+"experiment"
+"03/29/2021 11:45:24:735 +0200"
+"min-pxcor","max-pxcor","min-pycor","max-pycor"
+"-30","30","-30","30"
+"[run number]","1","1","2","2","3","3","4","4","5","5"
+"using-small-screen","false",,"false",,"false",,"false",,"false",
+"percent-misinformed","50",,"50",,"50",,"50",,"50",
+"number-of-people","500",,"500",,"500",,"500",,"500",
+"average-friends","15",,"15",,"15",,"15",,"15",
+"news-trust","21",,"29",,"38.5",,"52",,"56",
+"[steps]","101","101","101","101","101","101","101","101","101","101"
+
+"[initial & final values]","count turtles with [belief > 50]","count turtles with [belief <= 50]","count turtles with [belief > 50]","count turtles with [belief <= 50]","count turtles with [belief > 50]","count turtles with [belief <= 50]","count turtles with [belief > 50]","count turtles with [belief <= 50]","count turtles with [belief > 50]","count turtles with [belief <= 50]"
+,"197","304","221","280","138","363","114","387","159","342"
