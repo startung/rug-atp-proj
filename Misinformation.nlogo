@@ -91,7 +91,6 @@ to go
   ;; stop condition
   ;; update stats
   if ticks > 100 [
-    print ( "No real stopping condition")
     stop
   ]
   if all? people [belief = 100] [stop]
