@@ -315,7 +315,7 @@ number-of-people
 number-of-people
 50
 1000
-100.0
+750.0
 50
 1
 people
@@ -550,33 +550,17 @@ NIL
 This model demonstrates the spread of misinformation through a population, and the impact of a trusted fact-check news media can have in its spread.
 
 ## HOW IT WORKS
-Each time step (tick), each node will try to convice the connected nodes of its own `belief`. Each node has a `belief` and also an incluenability which tetermiens how much a a node will be influenced by neighbors per tick. The more the node beliefs in a theory the more red the node becommes. Initial beliefers of a theory will be displayed as a sheep. This only helps as a representation and is not used afterwards. 
+Each time step (tick), each node will try to convice the connected nodes of its own `belief`. Each node has a `belief` and also an incluenability which tetermiens how much a a node will be influenced by neighbors per tick. The more the node beliefs in a theory the more red the node becommes. Initial beliefers of a theory will be displayed as a sheep and will be determined by the `percent-missinformed` value. The visualisation of the sheep only helps as a representation and is not used afterwards further.
 
-Each node will also adjust his position to its belief. If there are two nodes which share a similar belied they will move closer towards eachother. This will lead to a clustering of nodes having a similar belief. Additionally, there is a radicallisation happening which happens when the neighbors are all strongly believing or strongly not believing in a theory. This will lead to the clusters, without news impact will either belief or dispelief a theory completely. 
+The number of neighbours each node has depends on the varbiable `average-firends`. Each neighbour is displeayed with an edge between nodes. The number of agents in the simulation can be modified by the `number-of-people` variable. 
 
+Each node will also adjust his position to its belief. If there are two nodes which share a similar belied they will move closer towards eachother. This will lead to a clustering of nodes having a similar belief. Additionally, there is a radicallisation happening which happens when the neighbors are all strongly believing or strongly not believing in a theory. This will lead to the clusters, without news impact will either belief or dispelief a theory completely. New friendships will also be created after each tick, favouring nodes which are connected closesly, meaning that close nodes will likely to become friends, helping the reinforcing effect of the belief in a theory in small groups. 
+One additional node, the news, is added in the center of the screan. This node would represent fact checked media. The variable `news-trust` determines how many people world watch the news and get influenced by it. 
 
 
 ## HOW TO USE IT
 
-Using the sliders, choose the NUMBER-OF-NODES and the AVERAGE-NODE-DEGREE (average number of links coming out of each node).
-
-The network that is created is based on proximity (Euclidean distance) between nodes.  A node is randomly chosen and connected to the nearest node that it is not already connected to.  This process is repeated until the network has the correct number of links to give the specified average node degree.
-
-The INITIAL-OUTBREAK-SIZE slider determines how many of the nodes will start the simulation infected with the virus.
-
-Then press SETUP to create the network.  Press GO to run the model.  The model will stop running once the virus has completely died out.
-
-The VIRUS-SPREAD-CHANCE, VIRUS-CHECK-FREQUENCY, RECOVERY-CHANCE, and GAIN-RESISTANCE-CHANCE sliders (discussed in "How it Works" above) can be adjusted before pressing GO, or while the model is running.
-
-The NETWORK STATUS plot shows the number of nodes in each state (S, I, R) over time.
-
-## THINGS TO NOTICE
-
-At the end of the run, after the virus has died out, some nodes are still susceptible, while others have become immune.  What is the ratio of the number of immune nodes to the number of susceptible nodes?  How is this affected by changing the AVERAGE-NODE-DEGREE of the network?
-
-## THINGS TO TRY
-
-Set GAIN-RESISTANCE-CHANCE to 0%.  Under what conditions will the virus still die out?   How long does it take?  What conditions are required for the virus to live?  If the RECOVERY-CHANCE is bigger than 0, even if the VIRUS-SPREAD-CHANCE is high, do you think that if you could run the model forever, the virus could stay alive?
+The previously mentioned variables can be changed by sliders. After changes in those variables have been done a click on the `setup` button will implement those. To run the model press on the `run` button. Several presets have been created and are based on the data from the Digital News Report (2020) by Reuters. 
 @#$#@#$#@
 default
 true
