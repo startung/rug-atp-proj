@@ -52,8 +52,6 @@ to setup-people
     set color white
     set influenceable random-float 1 ;; gets a value 0 < pers < 1
     set news-trust? false
-;;    become-susceptible
-;;    set virus-check-timer random virus-check-frequency
   ]
 end
 
