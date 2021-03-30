@@ -310,7 +310,7 @@ SLIDER
 418
 number-of-people
 number-of-people
-50
+100
 1000
 500.0
 50
