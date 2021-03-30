@@ -315,7 +315,7 @@ number-of-people
 number-of-people
 50
 1000
-750.0
+500.0
 50
 1
 people
@@ -370,9 +370,9 @@ NIL
 
 TEXTBOX
 15
-130
+99
 165
-148
+117
 Presets
 14
 0.0
@@ -454,7 +454,7 @@ TEXTBOX
 10
 240
 111
-You can either choose a preset or choose your own values, if you choose custom values you need to click Setup.\n\nThen to run click Go.
+You can either choose a preset or choose your own values, if you choose custom values you need to click Setup.\nThen to run click Go.
 14
 0.0
 1
@@ -479,7 +479,7 @@ news-trust
 news-trust
 0
 number-of-people
-56.0
+21.0
 1
 1
 %
@@ -539,6 +539,23 @@ T
 OBSERVER
 NIL
 3
+NIL
+NIL
+1
+
+BUTTON
+21
+120
+247
+153
+No Trust
+set number-of-people 500\nset average-friends 15\nset percent-misinformed 50\nset news-trust 0\nsetup
+NIL
+1
+T
+OBSERVER
+NIL
+0
 NIL
 NIL
 1
